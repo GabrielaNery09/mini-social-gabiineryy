@@ -1,40 +1,88 @@
-let likeCount = 0;
-let curtido = false; // flag booleana
+// === "BANCO DE DADOS (JSON Simulado)" === 
 
-function curtir() {
-
-  if(curtido == false){
-    likeCount++;
-    curtido = true;
-  document.getElementById("likeCount").innerText = likeCount;
-  }else{
-    likeCount--;
-    curtido = false;
-  document.getElementById("likeCount").innerText = likeCount;
-  }
-
-
+let post = {
+  likeCount: 0,
+  dislikeCount: 0,
+  curtido: false,
+  descurtido: false
 }
 
-document.getElementById("likeBtn").addEventListener("click", curtir);
+// === SERVICE (regras de negócio)
+function curtir() {
+  if (post.curtido == false){
+    post.likeCount++;
+    post.curtido = true;
+    
 
-let deslikeCount = 0;
-let descurtido = false; // flag booleana
+    if(post.descurtido == true){
+      post.dislikeCount--;
+      post.descurtido = false;
+    }
+
+  }else{
+    post.likeCount--;
+    post.curtido = false;
+  }
+
+}
 
 function descurtir() {
+  if(post.descurtido == false){
+    post.dislikeCount++;
+    post.descurtido = true;
+    
 
-  if(descurtido == false){
-    deslikeCount++;
-    descurtido = true;
-  document.getElementById("deslikeCount").innerText = deslikeCount;
-  }else{
-    deslikeCount--;
-    descurtido = false;
-  document.getElementById("deslikeCount").innerText = deslikeCount;
+    if(post.curtido == true){
+      post.likeCount--;
+      post.curtido = false;
+    }
+
   }
-
-
+  else{
+    post.dislikeCount--;
+    post.descurtido = false;
+  }
 }
 
-document.getElementById("deslikeBtn").addEventListener("click", descurtir);
+//=== API SIMULADA ===
 
+function getPost(){
+  return post;
+}
+
+function likePost(){
+  curtir ();
+  return post;
+}
+
+function dislikePost(){
+  descurtir ();
+  return post;
+}
+
+//=== VIEWS (interface)===
+
+function atualizarTela(dados){
+  document.getElementById("likeCount").innerText = dados.likeCount;
+  document.getElementById("dislikeCount").innerText = dados.dislikeCount;
+}
+
+//=== CONTROLLER (intermediação evento/regras de negócio)
+
+function clicarCurtir(){
+  let dados = likePost();
+  atualizarTela(dados);
+}
+function clicarDescurtir(){
+  let dados = dislikePost ();
+  atualizarTela(dados);
+}
+
+
+// === EVENTOS ====
+document.getElementById("likeBtn").addEventListener("click", clicarCurtir);
+document.getElementById("dislikeBtn").addEventListener("click", clicarDescurtir);
+
+// === INICIALIZAÇÃO DE TELA ===
+
+atualizarTela();
